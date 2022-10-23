@@ -15,8 +15,10 @@ export class OrganizationService {
     private readonly organizationRepository: Repository<OrganizationEntity>,
   ) {}
 
-  create(createOrganizationDto: CreateOrganizationDto) {
-    return 'This action adds a new organization';
+  async create(
+    createOrganizationDto: CreateOrganizationDto,
+  ): Promise<OrganizationEntity> {
+    return await this.organizationRepository.save(createOrganizationDto);
   }
 
   async findAll(): Promise<OrganizationEntity[]> {

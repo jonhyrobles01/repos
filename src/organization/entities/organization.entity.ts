@@ -8,6 +8,6 @@ export class OrganizationEntity extends BaseEntity {
   @Column({ type: 'char', length: 50 })
   name: string;
 
-  @Column('int')
+  @Column({ type: 'int', default: 1 })
   status: number;
 }
