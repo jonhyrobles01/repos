@@ -6,9 +6,9 @@ import { OrganizationService } from '@/organization';
 
 import {
   Get,
+  Put,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Controller,
@@ -33,7 +33,7 @@ export class OrganizationController {
     return this.organizationService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
