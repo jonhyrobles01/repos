@@ -37,8 +37,17 @@ export class OrganizationService {
     return organization;
   }
 
-  update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
-    return `This action updates a #${id} organization`;
+  async update(
+    id: number,
+    updateOrganizationDto: UpdateOrganizationDto,
+  ): Promise<OrganizationEntity> {
+    const organization = await this.findOne(id);
+    organization.name = updateOrganizationDto.name ?? organization.name;
+    organization.status = updateOrganizationDto.status ?? organization.status;
+
+    await organization.save();
+
+    return organization;
   }
 
   remove(id: number) {

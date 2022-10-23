@@ -29,16 +29,16 @@ export class OrganizationController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.organizationService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.organizationService.findOne(id);
   }
 
   @Put(':id')
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateOrganizationDto: UpdateOrganizationDto,
   ) {
-    return this.organizationService.update(+id, updateOrganizationDto);
+    return this.organizationService.update(id, updateOrganizationDto);
   }
 
   @Delete(':id')
