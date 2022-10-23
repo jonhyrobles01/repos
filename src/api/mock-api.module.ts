@@ -1,5 +1,5 @@
+import { AxiosFactory } from '@/config';
 import { MockApiService, MockApiController } from '@/api';
-import { AxiosFactory } from '@/config/httpAxios.provider';
 
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
