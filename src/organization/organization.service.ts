@@ -50,7 +50,9 @@ export class OrganizationService {
     return organization;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} organization`;
+  async remove(id: number): Promise<void> {
+    const organization = await this.findOne(id);
+
+    await organization.remove();
   }
 }

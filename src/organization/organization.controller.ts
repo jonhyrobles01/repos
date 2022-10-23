@@ -42,7 +42,11 @@ export class OrganizationController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.organizationService.remove(+id);
+  async remove(@Param('id') id: number) {
+    await this.organizationService.remove(id);
+
+    return {
+      message: 'Organization removed successfully',
+    };
   }
 }
