@@ -21,7 +21,7 @@ export const DatabaseConnectionFactory: TypeOrmModuleAsyncOptions = {
       extra: {
         options: routingId,
       },
-      entities: [],
+      entities: ['dist/**/*.entity.js'],
       synchronize: true,
     };
   },
