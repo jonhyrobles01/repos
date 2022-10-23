@@ -5,8 +5,8 @@ import {
 import { OrganizationEntity } from '@/organization/entities';
 
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class OrganizationService {
@@ -23,8 +23,16 @@ export class OrganizationService {
     return await this.organizationRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} organization`;
+  async findOne(id: number): Promise<OrganizationEntity> {
+    const organization = await this.organizationRepository.findOneBy({
+      id_organization: id,
+    });
+
+    if (!organization) {
+      throw new NotFoundException(`Organization with id: ${id} not found`);
+    }
+
+    return organization;
   }
 
   update(id: number, updateOrganizationDto: UpdateOrganizationDto) {
