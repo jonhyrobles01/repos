@@ -38,7 +38,7 @@ export class TribuService {
     return { repositories: await this.formatResponse(tribu) };
   }
 
-  private validateTribu(tribu: TribuEntity): void {
+  validateTribu(tribu: TribuEntity): void {
     if (!tribu) {
       throw new NotFoundException('La Tribu no se encuentra registrada');
     }
