@@ -1,7 +1,8 @@
 import { MockApiService } from '@/api';
 import { TribuEntity } from '@/tribu/entities';
-import { RepositoriesResponseDto } from '@/tribu/dtos';
+import { RepositoriesResponseDto, TribuInput } from '@/tribu/dtos';
 
+import * as moment from 'moment';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -14,10 +15,40 @@ export class TribuService {
     private readonly mockApiService: MockApiService,
   ) {}
 
-  async findAll() {
-    return await this.tribuRepository.find({
-      relations: ['organization', 'repositories'],
-    });
+  async findAll({ date, coverage, state }: TribuInput) {
+    const tribusQuery = this.tribuRepository
+      .createQueryBuilder('t')
+      .innerJoinAndSelect('t.organization', 'o')
+      .leftJoinAndSelect('t.repositories', 'r')
+      .leftJoinAndSelect('r.metrics', 'm');
+
+    if (date) {
+      tribusQuery.andWhere(
+        `experimental_strftime(r.create_time, 'YYYY-MM-DD') = :date`,
+        {
+          date: moment(date).format('YYYY-MM-DD'),
+        },
+      );
+    }
+
+    if (coverage) {
+      tribusQuery.andWhere('m.coverage = :coverage', { coverage });
+    }
+
+    if (state) {
+      tribusQuery.andWhere('r.state = :state', { state });
+    }
+
+    const tribus = await tribusQuery.getMany();
+    const repositoriesApi = await this.formatMockRepositories();
+
+    return {
+      repositories: [
+        ...tribus
+          .map((tribu) => this.formatResponse(tribu, repositoriesApi))
+          .flat(),
+      ],
+    };
   }
 
   async findOne(id: number) {
@@ -35,7 +66,9 @@ export class TribuService {
 
     this.validateTribu(tribu);
 
-    return { repositories: await this.formatResponse(tribu) };
+    const repositoriesApi = await this.formatMockRepositories();
+
+    return { repositories: this.formatResponse(tribu, repositoriesApi) };
   }
 
   validateTribu(tribu: TribuEntity): void {
@@ -50,11 +83,10 @@ export class TribuService {
     }
   }
 
-  private async formatResponse(
+  private formatResponse(
     tribu: TribuEntity,
-  ): Promise<RepositoriesResponseDto[]> {
-    const repositoriesApi = await this.formatMockRepositories();
-
+    repositoriesApi: any,
+  ): RepositoriesResponseDto[] {
     return tribu.repositories.map((repo) => {
       const response = new RepositoriesResponseDto(repo);
       response.tribe = tribu.name.trim();
