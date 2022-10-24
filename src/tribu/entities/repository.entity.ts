@@ -5,8 +5,9 @@ import {
   Column,
   Entity,
   OneToOne,
-  JoinColumn,
   ManyToOne,
+  BaseEntity,
+  JoinColumn,
   CreateDateColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -15,7 +16,7 @@ const states = Object.keys(REPOSITORY_STATE);
 const status = Object.keys(REPOSITORY_STATUS);
 
 @Entity({ name: 'repository' })
-export class RepositoryEntity {
+export class RepositoryEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id_repository: number;
 
@@ -43,13 +44,19 @@ export class RepositoryEntity {
     name: 'id_tribe',
     referencedColumnName: 'id_tribe',
   })
-  @ManyToOne(() => TribuEntity, { persistence: false })
+  @ManyToOne(() => TribuEntity, ({ repositories }) => repositories, {
+    persistence: false,
+  })
   tribe: TribuEntity;
 
   @JoinColumn({
     name: 'id_repository',
     referencedColumnName: 'id_repository',
   })
-  @OneToOne(() => MetricsEntity, { persistence: false })
-  organization: MetricsEntity;
+  @OneToOne(() => MetricsEntity, {
+    eager: true,
+    persistence: false,
+    createForeignKeyConstraints: false,
+  })
+  metrics: MetricsEntity;
 }
