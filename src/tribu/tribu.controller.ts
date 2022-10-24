@@ -1,9 +1,10 @@
 import { TribuService } from '@/tribu';
 import { TribuInput } from '@/tribu/dtos';
 
-import { Get, Param, Controller, Query } from '@nestjs/common';
+import { Response } from 'express';
+import { Get, Param, Controller, Query, Res } from '@nestjs/common';
 
-@Controller('repositories/tribu')
+@Controller('repositories')
 export class TribuController {
   constructor(private readonly tribuService: TribuService) {}
 
@@ -16,5 +17,10 @@ export class TribuController {
   @Get(':id')
   findOne(@Param('id') id: number) {
     return this.tribuService.findOne(id);
+  }
+
+  @Get('/export/:id')
+  export(@Param('id') id: number, @Res() res: Response) {
+    return this.tribuService.export(id, res);
   }
 }

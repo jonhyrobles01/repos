@@ -7,7 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [TypeOrmModule.forFeature([TribuEntity]), MockApiModule],
-  controllers: [TribuController],
   providers: [TribuService],
+  controllers: [TribuController],
+  exports: [TribuService],
 })
 export class TribuModule {}

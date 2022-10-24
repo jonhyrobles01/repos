@@ -3,6 +3,8 @@ import { TribuEntity } from '@/tribu/entities';
 import { RepositoriesResponseDto, TribuInput } from '@/tribu/dtos';
 
 import * as moment from 'moment';
+import * as Excel from 'exceljs';
+import { Response } from 'express';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -104,5 +106,34 @@ export class TribuService {
       acc[repo.id] = repo.state;
       return acc;
     }, {});
+  }
+
+  async export(id: number, res: Response) {
+    const { repositories } = await this.findOne(id);
+
+    res.writeHead(200, {
+      'Access-Control-Expose-Headers': '*',
+      'Content-Disposition': `attachment; filename="repositories.xlsx"`,
+      'Transfer-Encoding': 'chunked',
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    const workbook = new Excel.stream.xlsx.WorkbookWriter({
+      stream: res,
+      useStyles: true,
+    });
+
+    const newTab = workbook.addWorksheet('Repositories');
+    newTab.columns = Object.keys(repositories[0]).map((key) => ({
+      header: key,
+      key,
+    }));
+
+    repositories.forEach((repo) => {
+      newTab.addRow(repo).commit();
+    });
+
+    return await workbook.commit();
   }
 }
