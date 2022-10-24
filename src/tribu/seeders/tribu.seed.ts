@@ -44,7 +44,7 @@ export class TribuSeeder implements Seeder {
     const tribu2 = new TribuEntity();
     tribu2.id_organization = organization22.id_organization;
     tribu2.name = 'Centro Digital';
-    const tribu22 = await this.tribu.save(tribu2);
+    await this.tribu.save(tribu2);
 
     const tribu3 = new TribuEntity();
     tribu3.id_organization = organization33.id_organization;
@@ -77,7 +77,7 @@ export class TribuSeeder implements Seeder {
 
     const metrics2 = new MetricsEntity();
     metrics2.id_repository = repositories22.id_repository;
-    metrics2.coverage = 0.35;
+    metrics2.coverage = 0.75;
     metrics2.code_smells = 1;
     metrics2.vulnerabilities = 2;
     await this.metrics.save(metrics2);

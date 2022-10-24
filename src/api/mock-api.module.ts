@@ -8,5 +8,6 @@ import { HttpModule } from '@nestjs/axios';
   imports: [HttpModule.registerAsync(AxiosFactory)],
   controllers: [MockApiController],
   providers: [MockApiService],
+  exports: [MockApiService],
 })
 export class MockApiModule {}
